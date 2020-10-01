@@ -60,7 +60,7 @@ namespace CrossZero
             }
         }
 
-        private void StartGame()
+        public void StartGame()
         {
             while (!win)
             {
