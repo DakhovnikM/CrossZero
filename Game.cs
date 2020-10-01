@@ -24,10 +24,8 @@ namespace CrossZero
 
         private void TakeInput(string str)
         {
-            int position;
-
             Console.Write($"Куда поставим {str} ? : ");
-            position = Convert.ToInt32(Console.ReadLine());
+            var position = Convert.ToInt32(Console.ReadLine());
 
             if ("XO".Contains(array[position - 1]))
                 return;
