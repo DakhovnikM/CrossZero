@@ -1,12 +1,3 @@
-﻿using System;
+﻿using CrossZero;
 
-namespace CrossZero
-{
-    class Program
-    {
-        private static void Main()
-        {
-            new Game().StartGame();
-        }
-    }
-}
+new Game().StartGame();
