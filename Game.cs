@@ -22,29 +22,6 @@ class Game
     private int count = 0;
     private bool gameOver = false;
 
-    public void CursorAction()
-    {
-        for (int i = 0; i < 3; i++)
-        {
-            for (int j = 0; j < 3; j++)
-            {
-                var str = positions[i + j * 3];
-
-                if (str == "X")
-                    Console.ForegroundColor = ConsoleColor.Green;
-                else
-                if (str == "O")
-                    Console.ForegroundColor = ConsoleColor.Red;
-                else
-                    Console.ForegroundColor = ConsoleColor.Gray;
-
-                Console.SetCursorPosition(i, j);
-                Console.Write($"{str}");
-            }
-        }
-        Console.WriteLine("\n");
-    }
-
     private void DrawBoard()
     {
         Console.Clear();
