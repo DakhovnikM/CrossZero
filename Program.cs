@@ -1,3 +1,3 @@
 ﻿using CrossZero;
 
-new Game().StartGame();
+new Game().Start();

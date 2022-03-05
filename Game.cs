@@ -4,39 +4,10 @@ namespace CrossZero;
 
 class Game
 {
-    static readonly string[] array = new string[] { "1", "2", "3", "4", "5", "6", "7", "8", "9" };
-    static string str = null;
-    static int count = 0;
-    static bool win = false;
+    private readonly string[] positions = new string[] { "1", "2", "3", "4", "5", "6", "7", "8", "9" };
 
-    private void DrawBoard()
+    private readonly int[,] winningCombinations = new int[8, 3]
     {
-        Console.Clear();
-        Console.WriteLine("-------------------");
-
-        for (var i = 0; i < 3; i++)
-        {
-            Console.WriteLine($"|  {array[i * 3] }  " + $"|  {array[1 + i * 3]}  |" + $"  {array[2 + i * 3] }  |");
-            Console.WriteLine("-------------------");
-        }
-    }
-
-    private void TakeInput(string str)
-    {
-        Console.Write($"Куда поставим {str} ? : ");
-        var position = Convert.ToInt32(Console.ReadLine());
-
-        if ("XO".Contains(array[position - 1]))
-            return;
-
-        array[position - 1] = str;
-        count++;
-    }
-
-    private void GetWinner()
-    {
-        var subArray = new int[8, 3]
-        {
             { 0, 1, 2 },
             { 3, 4, 5 },
             { 6, 7, 8 },
@@ -45,38 +16,130 @@ class Game
             { 2, 5, 8 },
             { 0, 4, 8 },
             { 2, 4, 6 }
-        };
+    };
+
+    private string Player => count % 2 == 0 ? "X" : "O";
+    private int count = 0;
+    private bool gameOver = false;
+
+    public void CursorAction()
+    {
+        for (int i = 0; i < 3; i++)
+        {
+            for (int j = 0; j < 3; j++)
+            {
+                var str = positions[i + j * 3];
+
+                if (str == "X")
+                    Console.ForegroundColor = ConsoleColor.Green;
+                else
+                if (str == "O")
+                    Console.ForegroundColor = ConsoleColor.Red;
+                else
+                    Console.ForegroundColor = ConsoleColor.Gray;
+
+                Console.SetCursorPosition(i, j);
+                Console.Write($"{str}");
+            }
+        }
+        Console.WriteLine("\n");
+    }
+
+    private void DrawBoard()
+    {
+        Console.Clear();
+
+        #region поле с клетками
+
+        //Console.WriteLine("-------------------");
+        //for (var i = 0; i < 3; i++)
+        //{
+        //    Console.Write($"|  {positions[i * 3] }  ");
+        //    Console.Write($"|  {positions[1 + i * 3]}  ");
+        //    Console.Write($"|  {positions[2 + i * 3] }  |");
+        //    Console.WriteLine();
+        //    Console.WriteLine("-------------------");
+        //}
+        #endregion
+
+
+        #region поле без клеток
+
+        for (int i = 0; i < 3; i++)
+        {
+            for (int j = 0; j < 3; j++)
+            {
+                Console.SetCursorPosition(i, j);
+
+                var str = positions[i + j * 3];
+
+                if (str == "X")
+                    Console.ForegroundColor = ConsoleColor.Green;
+                else
+                if (str == "O")
+                    Console.ForegroundColor = ConsoleColor.Red;
+                else
+                    Console.ForegroundColor = ConsoleColor.Gray;
+
+                Console.Write($"{str}");
+            }
+        }
+        Console.WriteLine("\n"); ;
+        #endregion
+
+
+        if (count == 9)
+            Console.WriteLine("Ничья!!!");
+        else
+        if (gameOver)
+            Console.WriteLine($"Выиграл игрок {Player} !!!");
+        else
+            Console.Write($"Куда поставим {Player} ? : ");
+    }
+
+    private void SelectPosition()
+    {
+        var isNum = int.TryParse(Console.ReadLine(), out int num);
+
+        if (!isNum) return;
+        if (num < 1 || num > 9) return;
+        if ("XO".Contains(positions[num - 1])) return;
+
+        positions[num - 1] = Player;
+        count++;
+    }
+
+    private void CheckWinner()
+    {
+        if (count <= 4) return;
+
+        if (count == 9)
+        {
+            gameOver = true;
+            count--;
+            return;
+        }
 
         for (var i = 0; i < 8; i++)
         {
-            if (array[subArray[i, 0]] == array[subArray[i, 1]] && array[subArray[i, 1]] == array[subArray[i, 2]])
+            if (positions[winningCombinations[i, 0]] == positions[winningCombinations[i, 1]]
+                && positions[winningCombinations[i, 1]] == positions[winningCombinations[i, 2]])
             {
-                str = array[subArray[i, 0]];
-                win = true;
+                gameOver = true;
+                count--;
             }
         }
     }
 
-    public void StartGame()
+    public void Start()
     {
-        while (!win)
+        while (!gameOver)
         {
             DrawBoard();
-            if (count == 9 && !win)
-            {
-                Console.WriteLine("Ничья!!!");
-                break;
-            }
-            else
-            {
-                if (count > 4)
-                    GetWinner();
-
-                if (!win)
-                    TakeInput(count % 2 == 0 ? "X" : "O");
-                else
-                    Console.WriteLine($"Выиграл {str} !!!");
-            }
+            SelectPosition();
+            CheckWinner();
         }
+
+        DrawBoard();
     }
 }
